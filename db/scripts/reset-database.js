@@ -11,16 +11,16 @@ async function resetDatabase() {
   try {
     // Drop existing tables if they exist
     await pool.query(`
-        DROP TABLE IF EXISTS Countries CASCADE;
-        DROP TABLE IF EXISTS Cities CASCADE;
-        DROP TABLE IF EXISTS Attractions CASCADE;
+        DROP TABLE IF EXISTS countries CASCADE;
+        DROP TABLE IF EXISTS cities CASCADE;
+        DROP TABLE IF EXISTS attractions CASCADE;
     `);
 
     // Create the Countries table
     await pool.query(`
         CREATE TABLE countries (
             id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(50) NOT NULL
+            name VARCHAR(50) NOT NULL,
             speaks_english BOOLEAN
         );
     `);
@@ -29,7 +29,7 @@ async function resetDatabase() {
     await pool.query(`
         CREATE TABLE cities (
             id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            city_name VARCHAR (50)
+            city_name VARCHAR (50),
             country_id INT REFERENCES countries(id)
         );
     `);
@@ -39,34 +39,44 @@ async function resetDatabase() {
     await pool.query(`
       CREATE TABLE attractions (
           id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-          city_name VARCHAR (50)
-          attr_name VARCHAR (50)
-          city_id INT REFERENCES cities(id)
-          star_rating INTEGER
-          address VARCHAR (100)
-          gps_coords INTEGER
-          nearest_station VARCHAR (50)
+          city_name VARCHAR(50),
+          attr_name VARCHAR (50),
+          city_id INT REFERENCES cities(id),
+          star_rating INTEGER,
+          address VARCHAR(100),
+          gps_coords DECIMAL,
+          nearest_station VARCHAR(50),
           wheelchair_access BOOLEAN
       );
   `);
 
-    // Seed the artists table
+    // Seed the countries table
     await pool.query(`
-        INSERT INTO artists (name)
+        INSERT INTO countries (name, speaks_english)
         VALUES 
-            ('Dua Lipa'),
-            ('Jay-Z');
+            ('France', False),
+            ('Italy', False)
+
     `);
 
-    // Seed the albums table
+    // Seed the cities table
     await pool.query(`
-        INSERT INTO albums (title, published_date, artist_id)
+        INSERT INTO cities (city_name, country_id)
         VALUES 
-            ('Dua Lipa', '2017-06-02', 1),
-            ('Future Nostalgia', '2020-03-27', 1),
-            ('Reasonable Doubt', '1996-06-25', 2),
-            ('The Blueprint', '2001-09-11', 2);
+            ('Paris', 1),
+            ('Rome', 2),
+            ('Venice', 2)
     `);
+
+        // Seed the attractions table
+    await pool.query(`
+    INSERT INTO attractions (attr_name, city_id, star_rating, address, gps_coords, nearest_station, wheelchair_access)
+    VALUES 
+        ('Eiffel Tower', 1, 3, '1 rue de paris, ville de paris', '48.858422945', 'Trocadéro', true),
+        ('Colosseum', 2, 4, '2 strada romana, roma', '48.858422945', 'Colosseo', false),
+        ('Doges Palace', 3, 5, '3 piazza san marco, venezia', '48.858422945', 'Piazza San Marco', false)
+`);
+
 
     console.log("Database reset successful");
   } catch (error) {
@@ -78,33 +88,3 @@ async function resetDatabase() {
 }
 
 await resetDatabase();
-
-CREATE TABLE "Countries"(
-  "Id" PK,
-  "Country_name" VARCHAR(50),
-  "Speaks_english" BOOLEAN
-);
-
-CREATE TABLE "Cities"(
-  "Id" PK,
-  "City_name" VARCHAR(50),
-  "Country_id" FK,
-  CONSTRAINT "FK_City.City_name"
-    FOREIGN KEY("City_name")
-      REFERENCES "Country"("Id")
-);
-
-CREATE TABLE "Attractions"(
-  "Id" PK,
-  "Attr_name" VARCHAR(50),
-  "City_id" FK,
-  "Star_rating" INTEGER,
-  "Address" VARCHAR(100),
-  "GPS_coords" INTEGER,
-  "Nearest_station" VARCHAR(50),
-  "Wheelchair_access" BOOLEAN,
-  CONSTRAINT "FK_Attraction.City_id"
-    FOREIGN KEY("City_id")
-      REFERENCES "City"("Id")
-);
-
