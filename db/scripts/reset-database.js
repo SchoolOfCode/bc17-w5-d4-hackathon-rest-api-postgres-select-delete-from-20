@@ -20,7 +20,7 @@ async function resetDatabase() {
     await pool.query(`
         CREATE TABLE countries (
             id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(50) NOT NULL,
+            country_name VARCHAR(50) NOT NULL,
             speaks_english BOOLEAN
         );
     `);
@@ -52,7 +52,7 @@ async function resetDatabase() {
 
     // Seed the countries table
     await pool.query(`
-        INSERT INTO countries (name, speaks_english)
+        INSERT INTO countries (country_name, speaks_english)
         VALUES 
             ('France', False),
             ('Italy', False)
