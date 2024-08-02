@@ -61,3 +61,33 @@ async function resetDatabase() {
 }
 
 await resetDatabase();
+
+CREATE TABLE "Country"(
+  "Id" PK,
+  "Country_name" VARCHAR(50),
+  "Speaks_english" BOOLEAN
+);
+
+CREATE TABLE "City"(
+  "Id" PK,
+  "City_name" VARCHAR(50),
+  "Country_id" FK,
+  CONSTRAINT "FK_City.City_name"
+    FOREIGN KEY("City_name")
+      REFERENCES "Country"("Id")
+);
+
+CREATE TABLE "Attraction"(
+  "Id" PK,
+  "Attr_name" VARCHAR(50),
+  "City_id" FK,
+  "Star_rating" INTEGER,
+  "Address" VARCHAR(100),
+  "GPS_coords" INTEGER,
+  "Nearest_station" VARCHAR(50),
+  "Wheelchair_access" BOOLEAN,
+  CONSTRAINT "FK_Attraction.City_id"
+    FOREIGN KEY("City_id")
+      REFERENCES "City"("Id")
+);
+
