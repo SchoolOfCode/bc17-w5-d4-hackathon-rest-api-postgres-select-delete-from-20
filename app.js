@@ -1,16 +1,22 @@
 // Import the required modules
 import express from "express";
+import morgan from "morgan";
+// import env from 'dotenv;'
 
 
 
-// Import your helper functions for your first resource here
-// import {
-//   getResourceOne,
-//   getResourceOneById,
-//   createResourceOne,
-//   updateResourceOneById,
-//   deleteResourceOneById,
-// } from "./resource_one.js";
+
+import {
+  getCountries
+} from "./countries.js";
+
+
+
+  // getCountryById,
+  // createCountry,
+  // updateCountryById,
+  // deleteCountryById,
+
 
 
 // Import your helper functions for your second resource here
@@ -30,6 +36,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json()); // express.json() middleware is used to parse incoming JSON requests
+app.use(morgan("dev"))
 
 
 
@@ -37,10 +44,11 @@ app.use(express.json()); // express.json() middleware is used to parse incoming 
 // Resource One Route Handlers
 
 // Endpoint to retrieve all <resource_one>
-app.get("/resourceone/", async function (req, res) {
-    console.log("I'm alive");
-    res.status(200).send("I'm alive!");
+app.get("/countries/", async function (req, res) {
+  const countries = await getCountries()
+    res.status(200).json({status: "success", data: countries});
 });
+
 
 // Endpoint to retrieve a <resource_one> by id
 app.get("/resourceone/:id", async function (req, res) {
