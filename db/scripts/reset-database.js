@@ -11,27 +11,44 @@ async function resetDatabase() {
   try {
     // Drop existing tables if they exist
     await pool.query(`
-        DROP TABLE IF EXISTS artists CASCADE;
-        DROP TABLE IF EXISTS albums CASCADE;
+        DROP TABLE IF EXISTS Countries CASCADE;
+        DROP TABLE IF EXISTS Cities CASCADE;
+        DROP TABLE IF EXISTS Attractions CASCADE;
     `);
 
-    // Create the artists table
+    // Create the Countries table
     await pool.query(`
-        CREATE TABLE artists (
+        CREATE TABLE countries (
             id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
+            name VARCHAR(50) NOT NULL
+            speaks_english BOOLEAN
         );
     `);
 
-    // Create the albums table with a foreign key to the artists table
+    // Create the Cities table with a foreign key to the Countries table
     await pool.query(`
-        CREATE TABLE albums (
+        CREATE TABLE cities (
             id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            published_date DATE,
-            artist_id INT REFERENCES artists(id)
+            city_name VARCHAR (50)
+            country_id INT REFERENCES countries(id)
         );
     `);
+
+
+    // Create the Attractions table with a foreign key to the Countries table
+    await pool.query(`
+      CREATE TABLE attractions (
+          id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          city_name VARCHAR (50)
+          attr_name VARCHAR (50)
+          city_id INT REFERENCES cities(id)
+          star_rating INTEGER
+          address VARCHAR (100)
+          gps_coords INTEGER
+          nearest_station VARCHAR (50)
+          wheelchair_access BOOLEAN
+      );
+  `);
 
     // Seed the artists table
     await pool.query(`
@@ -62,13 +79,13 @@ async function resetDatabase() {
 
 await resetDatabase();
 
-CREATE TABLE "Country"(
+CREATE TABLE "Countries"(
   "Id" PK,
   "Country_name" VARCHAR(50),
   "Speaks_english" BOOLEAN
 );
 
-CREATE TABLE "City"(
+CREATE TABLE "Cities"(
   "Id" PK,
   "City_name" VARCHAR(50),
   "Country_id" FK,
@@ -77,7 +94,7 @@ CREATE TABLE "City"(
       REFERENCES "Country"("Id")
 );
 
-CREATE TABLE "Attraction"(
+CREATE TABLE "Attractions"(
   "Id" PK,
   "Attr_name" VARCHAR(50),
   "City_id" FK,
